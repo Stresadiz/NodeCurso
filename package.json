@@ -1,0 +1,16 @@
+{
+  "name": "curso-node",
+  "version": "1.0.0",
+  "description": "El curso de node",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "curso",
+    "node",
+    "nodejs"
+  ],
+  "author": "Elias Sebastian Luna",
+  "license": "ISC"
+}
