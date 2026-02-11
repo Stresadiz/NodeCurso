@@ -1,4 +1,4 @@
-//ES module exports
-export function sum(a, b) {
-    return a + b
+// ES module exports
+export function sum (a, b) {
+  return a + b
 }

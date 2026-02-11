@@ -1,19 +1,18 @@
-const {readFile} = require('node:fs/promises');
+const { readFile } = require('node:fs/promises');
 
-//iifi
+// iifi
 (
-    async () => {
-        console.log('Leyendo priomer archivo...');
+  async () => {
+    console.log('Leyendo priomer archivo...')
 
-        const text = await readFile('./archivo.txt', 'utf-8')
-        console.log(text);
+    const text = await readFile('./archivo.txt', 'utf-8')
+    console.log(text)
 
-        console.log('Cosa mientras tanto...');
+    console.log('Cosa mientras tanto...')
 
-        console.log('Leyendo segundo archivo...');
+    console.log('Leyendo segundo archivo...')
 
-        const text2 = await readFile('./archivo2.txt', 'utf-8')
-        console.log(text2);
-    }
+    const text2 = await readFile('./archivo2.txt', 'utf-8')
+    console.log(text2)
+  }
 )()
-

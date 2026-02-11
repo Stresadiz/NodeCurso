@@ -1,41 +1,41 @@
-const fs = require('node:fs/promises');
+const fs = require('node:fs/promises')
 const path = require('node:path')
 
-const folder = process.argv[2] ?? '.';
+const folder = process.argv[2] ?? '.'
 
-async function ls(folder) {
-    let files
+async function ls (folder) {
+  let files
+
+  try {
+    files = await fs.readdir(folder)
+  } catch (error) {
+    console.log(`Directorio inexistente ${folder}`)
+    process.exit(1)
+  }
+
+  const filesPromises = files.map(async file => {
+    const filePath = path.join(folder, file)
+
+    let fileStats
 
     try {
-        files = await fs.readdir(folder)
+      fileStats = await fs.stat(filePath)
     } catch (error) {
-        console.log(`Directorio inexistente ${folder}`);
-        process.exit(1);  
+      console.log('no se puede recuperar estadisticas del archivo')
+      process.exit(1)
     }
-    
-    const filesPromises = files.map(async file => {
-        const filePath = path.join(folder, file);
 
-        let fileStats
+    const isDirectory = fileStats.isDirectory()
+    const fileType = isDirectory ? '📁' : '📃'
+    const fileSize = fileStats.size.toString()
+    const fileModified = fileStats.mtime.toLocaleString()
 
-        try {
-            fileStats = await fs.stat(filePath)    
-        } catch (error) {
-            console.log('no se puede recuperar estadisticas del archivo');
-            process.exit(1);
-        }
+    return `${fileType} ${file.padEnd(30)} 💾 ${fileSize.padEnd(10)} 🗓️  ${fileModified}`
+  })
 
-        const isDirectory = fileStats.isDirectory();
-        const fileType = isDirectory ? '📁' : '📃';
-        const fileSize = fileStats.size.toString();
-        const fileModified = fileStats.mtime.toLocaleString();
+  const fileInfo = await Promise.all(filesPromises)
 
-        return `${fileType} ${file.padEnd(30)} 💾 ${fileSize.padEnd(10)} 🗓️  ${fileModified}`
-    });
-
-    const fileInfo = await Promise.all(filesPromises);
-
-    fileInfo.forEach(fileInfo => console.log(fileInfo));
+  fileInfo.forEach(fileInfo => console.log(fileInfo))
 }
 
-ls(folder);
+ls(folder)
