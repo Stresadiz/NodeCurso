@@ -12,5 +12,8 @@
     "nodejs"
   ],
   "author": "Elias Sebastian Luna",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "picocolors": "^1.1.1"
+  }
 }
