@@ -1,0 +1,28 @@
+###Recuperar peliculas
+GET http://localhost:1234/movies
+
+###pELICULA POR ID invalido
+GET http://localhost:1234/movies/1
+
+###pELICULA POR ID correcto
+GET http://localhost:1234/movies/dcdd0fad-a94c-4810-8acc-5f108d3b18c3
+
+
+###Pelicula por un genero
+GET http://localhost:1234/movies?genre=drama
+
+###Creau una pelicula
+POST http://localhost:1234/movies
+Content-Type: application/json
+
+{
+    "title": "Pulp Fiction 2",
+    "year": 1994,
+    "director": "Quentin Tarantino",
+    "duration": 154,
+    "poster": "https://www.themoviedb.org/t/p/original/vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg",
+    "genre": [
+      "Crime",
+      "Drama"
+    ]
+}
