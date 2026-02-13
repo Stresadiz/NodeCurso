@@ -2,6 +2,8 @@ const express = require('express')
 const movies = require('./movies.json');
 const crypto = require('node:crypto');
 
+const {createNewMovie} = require('./schemas/movies')
+
 const app = express();
 const PORT = process.env.PORT ?? 1234;
 
@@ -58,28 +60,12 @@ app.get('/movies/:id', (req, res) => { //path-to-regexp
 
 
 app.post('/movies', (req, res) => {
-    const {
-        title,
-        year,
-        director,
-        duration,
-        poster,
-        genre,
-        rate
-    } = req.body
+    
+    const newMovie = createNewMovie(req)
 
-
-    const newMovie = {
-        id: crypto.randomUUID(),
-        title,
-        year,
-        director,
-        duration,
-        poster,
-        genre,
-        rate: rate ?? 0
+    if (!newMovie) {
+            res.status(400).json({message: 'Movie cannot be created'})
     }
-
     //Esto no es rest porque guarda estado en memoria
     movies.push(newMovie)
 
