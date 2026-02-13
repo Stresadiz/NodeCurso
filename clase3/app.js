@@ -1,0 +1,91 @@
+const express = require('express')
+const movies = require('./movies.json');
+const crypto = require('node:crypto');
+
+const app = express();
+const PORT = process.env.PORT ?? 1234;
+
+//No todas las api's son rest (existe soap)
+
+/*
+REST
+Arquitectura de software -> Comunicaciones en redes
+
+- Resources -> Cada resource se identifica con una url
+- verbos HTTP -> Definen operaciones con los recursos
+- Representaciones -> Los recursos se pueden representar en diferentes formatos (polimorfismo)
+- Stateless -> El server no debe mantener ningun estado sobre el cliente entre solicitudes
+- Interfaz uniforme -> La interfaz debe ser consistente para todas las interacciones
+- Separacion de conceptos -> Cliente y servidor evolucionan de forma separada
+*/
+app.use(express.json());
+
+app.disable('x-powered-by');
+
+//EndPoints
+app.get('/movies', (req, res) => {
+    const {genre} = req.query
+
+    if (genre) {
+        const filteredMovies = movies.filter( movie => 
+            movie.genre.some(g => 
+                g.toLowerCase() === genre.toLowerCase()
+            )
+        )
+        
+        if (filteredMovies) {
+            return res.json(filteredMovies)
+        } else {
+            res.status(404).json({message: 'Movies not found by that filter'})
+        }
+    } else{
+        res.json(movies)
+    }
+})
+
+app.get('/movies/:id', (req, res) => { //path-to-regexp
+    const { id } = req.params
+
+    const movie = movies.find(movie => movie.id === id)
+
+    if (movie) {
+        return res.json(movie)
+    } else {
+        res.status(404).json({message: 'Movie not found'})
+    }
+    
+})
+
+
+app.post('/movies', (req, res) => {
+    const {
+        title,
+        year,
+        director,
+        duration,
+        poster,
+        genre,
+        rate
+    } = req.body
+
+
+    const newMovie = {
+        id: crypto.randomUUID(),
+        title,
+        year,
+        director,
+        duration,
+        poster,
+        genre,
+        rate: rate ?? 0
+    }
+
+    //Esto no es rest porque guarda estado en memoria
+    movies.push(newMovie)
+
+    res.status(201).json(newMovie)
+})
+
+app.listen(PORT, () =>{
+    console.log(`App escuchando en http://localhost:${PORT}`);
+})
