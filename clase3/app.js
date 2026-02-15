@@ -2,7 +2,7 @@ const express = require('express')
 const movies = require('./movies.json');
 const crypto = require('node:crypto');
 
-const {createNewMovie} = require('./schemas/movies')
+const { validateMovie, validatePartialMovie } = require('./schemas/movies')
 
 const app = express();
 const PORT = process.env.PORT ?? 1234;
@@ -26,6 +26,8 @@ app.disable('x-powered-by');
 
 //EndPoints
 app.get('/movies', (req, res) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
+
     const {genre} = req.query
 
     if (genre) {
@@ -61,7 +63,17 @@ app.get('/movies/:id', (req, res) => { //path-to-regexp
 
 app.post('/movies', (req, res) => {
     
-    const newMovie = createNewMovie(req)
+    const parsed = validateMovie(req.body)
+
+    if (!parsed.success) {
+        return null
+    }
+
+    const newMovie = {
+        id: crypto.randomUUID(),
+        ...parsed.data,
+        rate: parsed.data.rate ?? 5
+    };
 
     if (!newMovie) {
             res.status(400).json({message: 'Movie cannot be created'})
@@ -70,6 +82,32 @@ app.post('/movies', (req, res) => {
     movies.push(newMovie)
 
     res.status(201).json(newMovie)
+})
+
+app.patch('/movies/:id', (req, res) => {
+   
+    const parsed = validatePartialMovie(req.body)
+
+    if (!parsed.success) {
+        return res.status(400).json({message: 'Error'})
+    }
+
+    const {id} = req.params;
+
+    const movieIndex = movies.findIndex(movie => movie.id === id);
+
+    if (movieIndex === -1) {
+        return res.status(400).json({message: 'Error'})
+    }
+
+    const updateMovie = {
+        ...movies[movieIndex],
+        ...parsed.data
+    }
+
+    movies[movieIndex] = updateMovie
+
+    return res.json(updateMovie)
 })
 
 app.listen(PORT, () =>{
