@@ -134,10 +134,3 @@ app.delete('/movies/:id', (req, res) => {
 app.listen(PORT, () =>{
     console.log(`App escuchando en http://localhost:${PORT}`);
 })
-
-/*
-git commit -m "Se crean estilos para web visual de modelo utilizado para pruebas
--Se genera un endpoint DELETE para nuestra API
--Se solucinan problemas en CORS en la petición de datos a nuestra API desde un sitio externo
--Se 
-*/
