@@ -1,11 +1,16 @@
 const express = require('express')
 const movies = require('./movies.json');
 const crypto = require('node:crypto');
+const cors = require('cors');
 
 const { validateMovie, validatePartialMovie } = require('./schemas/movies')
 
 const app = express();
 const PORT = process.env.PORT ?? 1234;
+app.use(cors({
+    origin: 'http://localhost:8080', // Allow specific origin [10]
+    methods: 'GET,POST,DELETE,PUT'
+}));
 
 //No todas las api's son rest (existe soap)
 
@@ -60,7 +65,6 @@ app.get('/movies/:id', (req, res) => { //path-to-regexp
     
 })
 
-
 app.post('/movies', (req, res) => {
     
     const parsed = validateMovie(req.body)
@@ -85,7 +89,7 @@ app.post('/movies', (req, res) => {
 })
 
 app.patch('/movies/:id', (req, res) => {
-   
+
     const parsed = validatePartialMovie(req.body)
 
     if (!parsed.success) {
@@ -110,6 +114,30 @@ app.patch('/movies/:id', (req, res) => {
     return res.json(updateMovie)
 })
 
+app.delete('/movies/:id', (req, res) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
+
+    const {id} = req.params;
+
+    const movieIndex = movies.findIndex(movie => movie.id === id);
+
+    if (movieIndex === -1) {
+        return res.status(400).json({message: 'Error'})
+    }
+
+    movies.splice(movies[movieIndex], 1)
+    
+    return res.status(204).json(movies)
+
+})
+
 app.listen(PORT, () =>{
     console.log(`App escuchando en http://localhost:${PORT}`);
 })
+
+/*
+git commit -m "Se crean estilos para web visual de modelo utilizado para pruebas
+-Se genera un endpoint DELETE para nuestra API
+-Se solucinan problemas en CORS en la petición de datos a nuestra API desde un sitio externo
+-Se 
+*/

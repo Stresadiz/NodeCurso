@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="./css/styles.css">
     <script type="module">
         fetch('http://localhost:1234/movies')
         .then(res => res.json())
@@ -15,16 +16,23 @@
                         <h2>${movie.title}</h2>
                         <img src="${movie.poster}" alt="${movie.title}">
                         <p>${movie.duration}</p>
-                    </article>
 
-                    <button>Eliminar</button>   
+                        <button>Eliminar</button>   
+                    </article>
                     `
                 }
             ).join('')
 
             document.querySelector('main').innerHTML = html
+            
             document.querySelector('button').addEventListener('click', el => {
-                el
+                const article = el.target.closest('article')
+                const value = article.getAttribute('data-id')
+
+                fetch(`http://localhost:1234/movies/${value}`, {method : 'DELETE'})
+                .then(movies =>{
+                    article.remove()
+                })
             })
         })
         .catch((err) => {
